@@ -1,6 +1,6 @@
 # look
 
-Brushless motor driving app using NUCLEO-U385RG-Q
+Brushless motor driving app using NUCLEO-U385RG-Q and EVLDRIVE102BH.
 
 ### Set up compiler
     $ sudo apt install gcc-arm-none-eabi
@@ -11,3 +11,4 @@ Brushless motor driving app using NUCLEO-U385RG-Q
     $ make clean all
 
 ![alt text](https://raw.githubusercontent.com/mdepx/look/main/images/nucleo-u3.webp)
+![alt text](https://raw.githubusercontent.com/mdepx/look/main/images/evldrive102bh.jpg)
