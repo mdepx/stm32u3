@@ -1,4 +1,4 @@
-APP =		look
+APP =		stm32u3
 
 CROSS_COMPILE ?= arm-none-eabi-
 export CROSS_COMPILE
