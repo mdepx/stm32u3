@@ -1,10 +1,10 @@
 #ifndef _SRC_TUSB_CONFIG_H_
 #define _SRC_TUSB_CONFIG_H_
 
-#define BOARD_TUD_RHPORT	0
+#define	BOARD_TUD_RHPORT	0
 #define	CFG_TUSB_MCU		OPT_MCU_STM32U3
 #define	CFG_TUSB_OS		OPT_OS_CUSTOM
-#define CFG_TUSB_DEBUG		0
+#define	CFG_TUSB_DEBUG		1
 #define	CFG_TUSB_MEM_SECTION	__attribute__ ((section(".usb_ram")))
 #define	CFG_TUSB_MEM_ALIGN	__attribute__ ((aligned(4)))
 
