@@ -9,6 +9,8 @@ OBJCOPY =	${CROSS_COMPILE}objcopy
 
 OSDIR =		mdepx
 
+ADAPTER_SERIAL ?=	003D003C3234510133353533
+
 all:
 	python3 -B ${OSDIR}/tools/emitter.py -j mdepx.conf
 	@${OBJCOPY} -O binary obj/${APP}.elf obj/${APP}.bin
@@ -23,9 +25,9 @@ clean:
 	@rm -rf obj/*
 
 flash:
-	sudo /home/br/dev/openocd-stm32u3/src/openocd -s /home/br/dev/openocd-stm32u3/tcl -f interface/stlink.cfg -f target/stm32u3x.cfg -c 'reset_config srst_only connect_assert_srst; program obj/${APP}.bin reset 0x08000000 exit'
+	sudo /home/br/dev/openocd-stm32u3/src/openocd -s /home/br/dev/openocd-stm32u3/tcl -f interface/stlink.cfg -f target/stm32u3x.cfg -c 'adapter serial ${ADAPTER_SERIAL}' -c 'reset_config srst_only connect_assert_srst; program obj/${APP}.bin reset 0x08000000 exit'
 
 openocd:
-	sudo /home/br/dev/openocd-stm32u3/src/openocd -s /home/br/dev/openocd-stm32u3/tcl -f interface/stlink.cfg -f target/stm32u3x.cfg -c 'reset_config srst_only connect_assert_srst'
+	sudo /home/br/dev/openocd-stm32u3/src/openocd -s /home/br/dev/openocd-stm32u3/tcl -f interface/stlink.cfg -f target/stm32u3x.cfg -c 'adapter serial ${ADAPTER_SERIAL}' -c 'reset_config srst_only connect_assert_srst'
 
 include ${OSDIR}/mk/user.mk
