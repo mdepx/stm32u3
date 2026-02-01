@@ -96,6 +96,7 @@ board_init(void)
 
 	bzero(&cfg, sizeof(struct rcc_config));
 	cfg.ahb1enr1 = AHB1ENR1_SRAM1EN | AHB1ENR1_FLASHEN;
+	cfg.ahb1enr2 = AHB1ENR2_PWREN;
 	cfg.ahb2enr1 = AHB2ENR1_SRAM2EN | AHB2ENR1_GPIOAEN;
 	cfg.apb2enr = APB2ENR_USART1EN | APB2ENR_TIM1EN | APB2ENR_USB1EN;
 
