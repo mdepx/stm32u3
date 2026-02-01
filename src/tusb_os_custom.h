@@ -21,6 +21,8 @@ typedef struct {
 } osal_queue_def_t;
 typedef osal_queue_def_t *osal_queue_t;
 
+#define	dprintf(fmt, ...)
+
 /* Mutexes. */
 
 TU_ATTR_ALWAYS_INLINE static inline osal_mutex_t
@@ -28,7 +30,7 @@ osal_mutex_create(osal_mutex_def_t *mdef)
 {
 	osal_mutex_t m;
 
-	printf("%s\n", __func__);
+	dprintf("%s\n", __func__);
 
 	m = malloc(sizeof(mdx_mutex_t));
 	if (m == NULL)
@@ -42,17 +44,22 @@ osal_mutex_create(osal_mutex_def_t *mdef)
 TU_ATTR_ALWAYS_INLINE static inline bool
 osal_mutex_lock(osal_mutex_t mutex_hdl, uint32_t msec)
 {
+	int ret;
 
-	printf("%s\n", __func__);
+	dprintf("%s\n", __func__);
 
-	return (true);
+	ret = mdx_mutex_timedlock(mutex_hdl, msec * 1000);
+
+	return (ret);
 }
 
 TU_ATTR_ALWAYS_INLINE static inline bool
 osal_mutex_unlock(osal_mutex_t mutex_hdl)
 {
 
-	printf("%s\n", __func__);
+	dprintf("%s\n", __func__);
+
+	mdx_mutex_unlock(mutex_hdl);
 
 	return (true);
 }
@@ -62,7 +69,9 @@ TU_ATTR_ALWAYS_INLINE static inline bool
 osal_mutex_delete(osal_mutex_t mutex_hdl)
 {
 
-	printf("%s\n", __func__);
+	dprintf("%s\n", __func__);
+
+	free(mutex_hdl);
 
 	return (true);
 }
@@ -86,21 +95,27 @@ TU_ATTR_ALWAYS_INLINE static inline void
 osal_spin_init(osal_spinlock_t *ctx)
 {
 
-	printf("%s\n", __func__);
+	dprintf("%s\n", __func__);
+
+	sl_init(ctx);
 }
 
 TU_ATTR_ALWAYS_INLINE static inline void
 osal_spin_lock(osal_spinlock_t *ctx, bool in_isr)
 {
 
-	printf("%s\n", __func__);
+	printf("%s: in_isr %d\n", __func__, in_isr);
+
+	sl_lock(ctx);
 }
 
 TU_ATTR_ALWAYS_INLINE static inline void
 osal_spin_unlock(osal_spinlock_t *ctx, bool in_isr)
 {
 
-	printf("%s\n", __func__);
+	printf("%s: in_isr %d\n", __func__, in_isr);
+
+	sl_unlock(ctx);
 }
 
 /* Queues. */
