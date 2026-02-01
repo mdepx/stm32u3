@@ -32,17 +32,57 @@
 
 #include <dev/i2c/i2c.h>
 
+#include <lib/tinyusb/src/tusb.h>
+#include <lib/tinyusb/src/class/hid/hid_device.h>
+
 extern struct stm32f4_gpio_softc gpio_sc;
 
 #define	dprintf(fmt, ...)
 
+void
+tud_hid_set_report_cb(uint8_t itf, uint8_t report_id,
+    hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize)
+{
+
+	printf("%s\n", __func__);
+
+	/* echo back anything we received from host */
+	tud_hid_report(0, buffer, bufsize);
+}
+
+uint16_t
+tud_hid_get_report_cb(uint8_t itf, uint8_t report_id,
+    hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen)
+{
+
+	printf("%s\n", __func__);
+
+	return (0);
+}
+
+uint32_t
+tusb_time_millis_api(void)
+{
+
+	printf("%s\n", __func__);
+
+	return (0);
+}
+
 int
 main(void)
 {
+	tusb_rhport_init_t dev_init = {
+		.role = TUSB_ROLE_DEVICE,
+		.speed = TUSB_SPEED_AUTO
+	};
+
+	tusb_init(BOARD_TUD_RHPORT, &dev_init);
 
 	while (1) {
-		printf("%s: Hello World from look\n", __func__);
+		printf("%s: Hello World from u3\n", __func__);
 		mdx_usleep(500000);
+		tud_task(); /* tinyusb device task */
 	}
 
 	return (0);
