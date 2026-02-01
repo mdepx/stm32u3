@@ -105,8 +105,6 @@ board_init(void)
 	mdx_intc_setup(&dev_nvic, 44, stm32f4_timer_intr, &timer_sc);
 	mdx_intc_enable(&dev_nvic, 44);
 
-#if 0
 	malloc_init();
-	malloc_add_region((void *)0x20020000, 0x20000);
-#endif
+	malloc_add_region((void *)0x20030000, 64 * 1024);
 }
