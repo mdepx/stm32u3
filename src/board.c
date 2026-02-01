@@ -38,6 +38,8 @@
 #include <arm/stm/stm32u3.h>
 #include <arm/arm/nvic.h>
 
+#include <lib/tinyusb/src/tusb.h>
+
 static struct stm32u3_rcc_softc rcc_sc;
 static struct stm32l4_usart_softc usart_sc;
 static struct stm32f4_timer_softc timer_sc;
@@ -84,9 +86,9 @@ static void
 stm32u3_usb_intr(void *arg, int irq)
 {
 
-	printf("%s\n", __func__);
+	dprintf("%s\n", __func__);
 
-	/* tusb_int_handler */
+	tusb_int_handler(0, 1);
 }
 
 void
