@@ -77,6 +77,15 @@ static const struct stm32_gpio_pin uart_pins[] = {
 	PINS_END
 };
 
+static void
+stm32u3_usb_intr(void *arg, int irq)
+{
+
+	printf("%s\n", __func__);
+
+	/* tusb_int_handler */
+}
+
 void
 board_init(void)
 {
@@ -85,7 +94,7 @@ board_init(void)
 	bzero(&cfg, sizeof(struct rcc_config));
 	cfg.ahb1enr1 = AHB1ENR1_SRAM1EN | AHB1ENR1_FLASHEN;
 	cfg.ahb2enr1 = AHB2ENR1_SRAM2EN | AHB2ENR1_GPIOAEN;
-	cfg.apb2enr = APB2ENR_USART1EN | APB2ENR_TIM1EN;
+	cfg.apb2enr = APB2ENR_USART1EN | APB2ENR_TIM1EN | APB2ENR_USB1EN;
 
 	/* RCC */
 	stm32u3_rcc_init(&rcc_sc, RCC_BASE);
@@ -104,6 +113,10 @@ board_init(void)
 	arm_nvic_init(&dev_nvic, NVIC_BASE);
 	mdx_intc_setup(&dev_nvic, 44, stm32f4_timer_intr, &timer_sc);
 	mdx_intc_enable(&dev_nvic, 44);
+
+	/* USB */
+	mdx_intc_setup(&dev_nvic, 73, stm32u3_usb_intr, NULL);
+	mdx_intc_enable(&dev_nvic, 73);
 
 	malloc_init();
 	malloc_add_region((void *)0x20030000, 64 * 1024);
