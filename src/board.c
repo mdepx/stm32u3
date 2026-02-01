@@ -41,6 +41,7 @@
 static struct stm32u3_rcc_softc rcc_sc;
 static struct stm32l4_usart_softc usart_sc;
 static struct stm32f4_timer_softc timer_sc;
+static struct stm32u3_pwr_softc pwr_sc;
 
 struct stm32f4_gpio_softc gpio_sc;
 
@@ -74,6 +75,8 @@ uart_putchar(int c, void *arg)
 static const struct stm32_gpio_pin uart_pins[] = {
 	{ PORT_A,  9, MODE_ALT, 7, OT_PP, OS_H, FLOAT }, /* USART1_TX */
 	{ PORT_A, 10, MODE_ALT, 7, OT_PP, OS_H, FLOAT }, /* USART1_RX */
+	//{ PORT_A, 13, MODE_ALT, 10, OT_PP, OS_H, FLOAT }, /* USB NOE */
+	//{ PORT_C,  9, MODE_ALT, 10, OT_PP, OS_H, FLOAT }, /* USB NOE */
 	PINS_END
 };
 
@@ -113,6 +116,9 @@ board_init(void)
 	arm_nvic_init(&dev_nvic, NVIC_BASE);
 	mdx_intc_setup(&dev_nvic, 44, stm32f4_timer_intr, &timer_sc);
 	mdx_intc_enable(&dev_nvic, 44);
+
+	/* PWR */
+	stm32u3_pwr_init(&pwr_sc, PWR_BASE);
 
 	/* USB */
 	mdx_intc_setup(&dev_nvic, 73, stm32u3_usb_intr, NULL);
