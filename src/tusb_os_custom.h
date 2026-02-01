@@ -42,36 +42,36 @@ osal_mutex_create(osal_mutex_def_t *mdef)
 }
 
 TU_ATTR_ALWAYS_INLINE static inline bool
-osal_mutex_lock(osal_mutex_t mutex_hdl, uint32_t msec)
+osal_mutex_lock(osal_mutex_t m, uint32_t msec)
 {
 	int ret;
 
 	dprintf("%s\n", __func__);
 
-	ret = mdx_mutex_timedlock(mutex_hdl, msec * 1000);
+	ret = mdx_mutex_timedlock(m, msec * 1000);
 
 	return (ret);
 }
 
 TU_ATTR_ALWAYS_INLINE static inline bool
-osal_mutex_unlock(osal_mutex_t mutex_hdl)
+osal_mutex_unlock(osal_mutex_t m)
 {
 
 	dprintf("%s\n", __func__);
 
-	mdx_mutex_unlock(mutex_hdl);
+	mdx_mutex_unlock(m);
 
 	return (true);
 }
 
 
 TU_ATTR_ALWAYS_INLINE static inline bool
-osal_mutex_delete(osal_mutex_t mutex_hdl)
+osal_mutex_delete(osal_mutex_t m)
 {
 
 	dprintf("%s\n", __func__);
 
-	free(mutex_hdl);
+	free(m);
 
 	return (true);
 }
@@ -80,7 +80,7 @@ osal_mutex_delete(osal_mutex_t mutex_hdl)
 
 #if 0
 TU_ATTR_ALWAYS_INLINE static inline bool
-osal_semaphore_delete(osal_semaphore_t semd_hdl)
+osal_semaphore_delete(osal_semaphore_t s)
 {
 
 	printf("%s\n", __func__);
@@ -130,19 +130,32 @@ osal_spin_unlock(osal_spinlock_t *ctx, bool in_isr)
 				    OSAL_Q_NAME(_name) }
 
 TU_ATTR_ALWAYS_INLINE static inline osal_queue_t
-osal_queue_create(osal_queue_def_t* qdef)
+osal_queue_create(osal_queue_def_t *qdef)
 {
 	osal_queue_t q;
 
 	printf("%s\n", __func__);
 
-	q = NULL;
+	q = malloc(sizeof(osal_queue_def_t));
+	if (q == NULL)
+		return (NULL);
 
 	return (q);
 }
 
 TU_ATTR_ALWAYS_INLINE static inline bool
-osal_queue_delete(osal_queue_t qhdl)
+osal_queue_delete(osal_queue_t q)
+{
+
+	printf("%s\n", __func__);
+
+	free(q);
+
+	return (true);
+}
+
+TU_ATTR_ALWAYS_INLINE static inline bool
+osal_queue_send(osal_queue_t q, void const *data, bool in_isr)
 {
 
 	printf("%s\n", __func__);
@@ -151,30 +164,21 @@ osal_queue_delete(osal_queue_t qhdl)
 }
 
 TU_ATTR_ALWAYS_INLINE static inline bool
-osal_queue_send(osal_queue_t qhdl, void const *data, bool in_isr)
+osal_queue_receive(osal_queue_t q, void* data, uint32_t msec)
+{
+
+	printf("%s\n", __func__);
+
+	return (false);
+}
+
+TU_ATTR_ALWAYS_INLINE static inline bool
+osal_queue_empty(osal_queue_t q)
 {
 
 	printf("%s\n", __func__);
 
 	return (true);
-}
-
-TU_ATTR_ALWAYS_INLINE static inline bool
-osal_queue_receive(osal_queue_t qhdl, void* data, uint32_t msec)
-{
-
-	printf("%s\n", __func__);
-
-	return (true);
-}
-
-TU_ATTR_ALWAYS_INLINE static inline bool
-osal_queue_empty(osal_queue_t qhdl)
-{
-
-	printf("%s\n", __func__);
-
-	return (0);
 }
 
 /* Misc. */
