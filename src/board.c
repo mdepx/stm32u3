@@ -128,5 +128,5 @@ board_init(void)
 	mdx_intc_enable(&dev_nvic, 73);
 
 	malloc_init();
-	malloc_add_region((void *)0x20030000, 64 * 1024);
+	malloc_add_region((void *)0x20030000, (64 * 1024));
 }
