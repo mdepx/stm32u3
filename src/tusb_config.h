@@ -3,7 +3,7 @@
 
 #define	CFG_TUSB_MCU		OPT_MCU_STM32U3
 #define	CFG_TUSB_OS		OPT_OS_CUSTOM
-#define	CFG_TUSB_DEBUG		10
+#define	CFG_TUSB_DEBUG		0
 
 /* Device stack. */
 #define CFG_TUD_ENABLED		1

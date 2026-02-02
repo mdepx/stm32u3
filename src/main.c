@@ -38,6 +38,8 @@
 
 extern struct stm32f4_gpio_softc gpio_sc;
 
+mdx_sem_t buffer_count;
+
 #define	dprintf(fmt, ...)
 
 void
@@ -61,6 +63,14 @@ tud_hid_get_report_cb(uint8_t itf, uint8_t report_id,
 	return (0);
 }
 
+static void
+tud_thread(void *arg)
+{
+
+	while (1)
+		tud_task(); /* tinyusb device task */
+}
+
 int
 main(void)
 {
@@ -71,11 +81,19 @@ main(void)
 
 	tusb_init(BOARD_TUD_RHPORT, &dev_init);
 
-	printf("%s: Hello World from u3\n", __func__);
-	mdx_usleep(50000);
+	mdx_sem_init(&buffer_count, 0);
 
-	while (1)
-		tud_task(); /* tinyusb device task */
+	struct thread *td;
+	td = mdx_thread_create("tud", 1, 10000, 8192, tud_thread, NULL);
+	if (td == NULL)
+		panic("cant create thread");
+	mdx_sched_add(td);
+
+	while (1) {
+		printf("%s: Hello World from u3\n", __func__);
+		mdx_usleep(500000);
+		mdx_usleep(500000);
+	}
 
 	return (0);
 }

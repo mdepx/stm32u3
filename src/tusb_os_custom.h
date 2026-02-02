@@ -7,6 +7,8 @@
 typedef mdx_mutex_t osal_mutex_def_t;
 typedef osal_mutex_def_t *osal_mutex_t;
 
+extern mdx_sem_t buffer_count;
+
 #if 0
 typedef mdx_sem_t osal_semaphore_def_t;
 typedef osal_semaphore_def_t *osal_semaphore_t;
@@ -185,6 +187,8 @@ osal_queue_send(osal_queue_t q, void const *data, bool in_isr)
 	memcpy(buf, data, q->item_sz);
 	buf_ring_enqueue(q->br_av, buf);
 
+	mdx_sem_post(&buffer_count);
+
 	dprintf("%s: ok copied %d\n", __func__, q->item_sz);
 
 	return (true);
@@ -194,6 +198,8 @@ TU_ATTR_ALWAYS_INLINE static inline bool
 osal_queue_receive(osal_queue_t q, void *data, uint32_t msec)
 {
 	void *buf;
+
+	mdx_sem_wait(&buffer_count);
 
 	buf = buf_ring_dequeue_mc(q->br_av);
 	if (buf == NULL)
