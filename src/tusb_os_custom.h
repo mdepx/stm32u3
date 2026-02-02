@@ -1,6 +1,8 @@
 #include <sys/mutex.h>
 #include <sys/sem.h>
 #include <sys/spinlock.h>
+#include <sys/buf_ring.h>
+#include <sys/list.h>
 
 typedef mdx_mutex_t osal_mutex_def_t;
 typedef osal_mutex_def_t *osal_mutex_t;
@@ -16,8 +18,11 @@ typedef struct spinlock osal_spinlock_t;
 typedef struct {
 	uint16_t depth;
 	uint16_t item_sz;
+	uint16_t item_sz1;
 	void *buf;
 	char const *name;
+	struct buf_ring *br;
+	struct buf_ring *br_av;
 } osal_queue_def_t;
 typedef osal_queue_def_t *osal_queue_t;
 
@@ -104,7 +109,7 @@ TU_ATTR_ALWAYS_INLINE static inline void
 osal_spin_lock(osal_spinlock_t *ctx, bool in_isr)
 {
 
-	printf("%s: in_isr %d\n", __func__, in_isr);
+	dprintf("%s: in_isr %d\n", __func__, in_isr);
 
 	sl_lock(ctx);
 }
@@ -113,7 +118,7 @@ TU_ATTR_ALWAYS_INLINE static inline void
 osal_spin_unlock(osal_spinlock_t *ctx, bool in_isr)
 {
 
-	printf("%s: in_isr %d\n", __func__, in_isr);
+	dprintf("%s: in_isr %d\n", __func__, in_isr);
 
 	sl_unlock(ctx);
 }
@@ -134,11 +139,23 @@ osal_queue_create(osal_queue_def_t *qdef)
 {
 	osal_queue_t q;
 
-	printf("%s\n", __func__);
+	dprintf("%s: item_sz %d depth %d buf %p name %s\n", __func__,
+	    qdef->item_sz, qdef->depth, qdef->buf, qdef->name);
 
 	q = malloc(sizeof(osal_queue_def_t));
 	if (q == NULL)
 		return (NULL);
+
+	uint8_t *buf;
+	int i;
+
+	q->item_sz = qdef->item_sz;
+	q->br = buf_ring_alloc(qdef->depth);
+	q->br_av = buf_ring_alloc(qdef->depth);
+	for (i = 0; i < qdef->depth; i++) {
+		buf = (uint8_t *)qdef->buf + i * qdef->item_sz;
+		buf_ring_enqueue(q->br, buf);
+	}
 
 	return (q);
 }
@@ -147,7 +164,7 @@ TU_ATTR_ALWAYS_INLINE static inline bool
 osal_queue_delete(osal_queue_t q)
 {
 
-	printf("%s\n", __func__);
+	dprintf("%s\n", __func__);
 
 	free(q);
 
@@ -157,28 +174,50 @@ osal_queue_delete(osal_queue_t q)
 TU_ATTR_ALWAYS_INLINE static inline bool
 osal_queue_send(osal_queue_t q, void const *data, bool in_isr)
 {
+	void *buf;
 
-	printf("%s\n", __func__);
+	buf = buf_ring_dequeue_mc(q->br);
+	dprintf("%s: isr %d buf %p data %p len %d\n", __func__, in_isr, buf,
+	    data, q->item_sz);
+	if (buf == NULL)
+		return (false);
+
+	memcpy(buf, data, q->item_sz);
+	buf_ring_enqueue(q->br_av, buf);
+
+	dprintf("%s: ok copied %d\n", __func__, q->item_sz);
 
 	return (true);
 }
 
 TU_ATTR_ALWAYS_INLINE static inline bool
-osal_queue_receive(osal_queue_t q, void* data, uint32_t msec)
+osal_queue_receive(osal_queue_t q, void *data, uint32_t msec)
 {
+	void *buf;
 
-	printf("%s\n", __func__);
+	buf = buf_ring_dequeue_mc(q->br_av);
+	if (buf == NULL)
+		return (false);
 
-	return (false);
+	dprintf("%s: buf %p\n", __func__, buf);
+
+	memcpy(data, buf, q->item_sz);
+
+	buf_ring_enqueue(q->br, buf);
+
+	return (true);
 }
 
 TU_ATTR_ALWAYS_INLINE static inline bool
 osal_queue_empty(osal_queue_t q)
 {
 
-	printf("%s\n", __func__);
+	if (buf_ring_empty(q->br_av)) {
+		dprintf("%s\n", __func__);
+		return (true);
+	}
 
-	return (true);
+	return (false);
 }
 
 /* Misc. */
@@ -186,6 +225,8 @@ osal_queue_empty(osal_queue_t q)
 TU_ATTR_ALWAYS_INLINE static inline void
 osal_task_delay(uint32_t msec)
 {
+
+	dprintf("%s\n", __func__);
 
 	mdx_usleep(msec * 1000);
 }
