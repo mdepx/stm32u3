@@ -111,11 +111,13 @@ board_init(void)
 	pin_configure(&gpio_sc, uart_pins);
 
 	/* UART */
-	stm32l4_usart_init(&usart_sc, USART1_BASE, 12000000, 115200);
+	stm32l4_usart_init(&usart_sc, USART1_BASE, 16000000, 115200);
 	mdx_console_register(uart_putchar, (void *)&usart_sc);
 
+	stm32u3_rcc_setup(&rcc_sc, &cfg);
+
 	/* TIMER */
-	stm32f4_timer_init(&timer_sc, TIM1_BASE, 12000000);
+	stm32f4_timer_init(&timer_sc, TIM1_BASE, 16000000);
 	arm_nvic_init(&dev_nvic, NVIC_BASE);
 	mdx_intc_setup(&dev_nvic, 44, stm32f4_timer_intr, &timer_sc);
 	mdx_intc_enable(&dev_nvic, 44);
@@ -123,10 +125,10 @@ board_init(void)
 	/* PWR */
 	stm32u3_pwr_init(&pwr_sc, PWR_BASE);
 
+	malloc_init();
+	malloc_add_region((void *)0x20030000, (64 * 1024));
+
 	/* USB */
 	mdx_intc_setup(&dev_nvic, 73, stm32u3_usb_intr, NULL);
 	mdx_intc_enable(&dev_nvic, 73);
-
-	malloc_init();
-	malloc_add_region((void *)0x20030000, (64 * 1024));
 }
