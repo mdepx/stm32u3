@@ -34,6 +34,7 @@
 
 #include <lib/tinyusb/src/tusb.h>
 #include <lib/tinyusb/src/class/hid/hid_device.h>
+#include <lib/tinyusb/src/common/tusb_fifo.h>
 
 extern struct stm32f4_gpio_softc gpio_sc;
 
@@ -41,7 +42,7 @@ extern struct stm32f4_gpio_softc gpio_sc;
 
 void
 tud_hid_set_report_cb(uint8_t itf, uint8_t report_id,
-    hid_report_type_t report_type, uint8_t const* buffer, uint16_t bufsize)
+    hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize)
 {
 
 	printf("%s\n", __func__);
@@ -52,16 +53,7 @@ tud_hid_set_report_cb(uint8_t itf, uint8_t report_id,
 
 uint16_t
 tud_hid_get_report_cb(uint8_t itf, uint8_t report_id,
-    hid_report_type_t report_type, uint8_t* buffer, uint16_t reqlen)
-{
-
-	printf("%s\n", __func__);
-
-	return (0);
-}
-
-uint32_t
-tusb_time_millis_api(void)
+    hid_report_type_t report_type, uint8_t *buffer, uint16_t reqlen)
 {
 
 	printf("%s\n", __func__);
@@ -79,11 +71,11 @@ main(void)
 
 	tusb_init(BOARD_TUD_RHPORT, &dev_init);
 
-	while (1) {
-		printf("%s: Hello World from u3\n", __func__);
-		mdx_usleep(500000);
+	printf("%s: Hello World from u3\n", __func__);
+	mdx_usleep(50000);
+
+	while (1)
 		tud_task(); /* tinyusb device task */
-	}
 
 	return (0);
 }
