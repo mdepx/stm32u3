@@ -21,6 +21,9 @@ readelf:
 objdump:
 	${CROSS_COMPILE}objdump -d obj/${APP}.elf | less
 
+objdumps:
+	${CROSS_COMPILE}objdump -S -d obj/${APP}.elf | less
+
 clean:
 	@rm -rf obj/*
 
