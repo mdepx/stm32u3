@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2025 Ruslan Bukin <br@bsdpad.com>
+ * Copyright (c) 2025-2026 Ruslan Bukin <br@bsdpad.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,6 +74,7 @@ tud_thread(void *arg)
 int
 main(void)
 {
+	struct thread *td;
 	tusb_rhport_init_t dev_init = {
 		.role = TUSB_ROLE_DEVICE,
 		.speed = TUSB_SPEED_AUTO
@@ -83,7 +84,6 @@ main(void)
 
 	mdx_sem_init(&buffer_count, 0);
 
-	struct thread *td;
 	td = mdx_thread_create("tud", 1, 10000, 8192, tud_thread, NULL);
 	if (td == NULL)
 		panic("cant create thread");

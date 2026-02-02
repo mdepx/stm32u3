@@ -88,7 +88,7 @@ stm32u3_usb_intr(void *arg, int irq)
 
 	dprintf("%s\n", __func__);
 
-	tusb_int_handler(0, 1);
+	tusb_int_handler(BOARD_TUD_RHPORT, 1);
 }
 
 void
