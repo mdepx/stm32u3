@@ -47,7 +47,7 @@ tud_hid_set_report_cb(uint8_t itf, uint8_t report_id,
     hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize)
 {
 
-	printf("%s\n", __func__);
+	dprintf("%s\n", __func__);
 
 	/* echo back anything we received from host */
 	tud_hid_report(0, buffer, bufsize);
@@ -58,7 +58,7 @@ tud_hid_get_report_cb(uint8_t itf, uint8_t report_id,
     hid_report_type_t report_type, uint8_t *buffer, uint16_t reqlen)
 {
 
-	printf("%s\n", __func__);
+	dprintf("%s\n", __func__);
 
 	return (0);
 }
