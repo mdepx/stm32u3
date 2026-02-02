@@ -23,7 +23,6 @@
  *
  */
 
-//#include "bsp/board_api.h"
 #include "board_u.h"
 #include "tusb.h"
 
@@ -114,7 +113,6 @@ uint8_t const desc_configuration[] =
 uint8_t const * tud_descriptor_configuration_cb(uint8_t index)
 {
   (void) index; // for multiple configurations
-printf("%s\n", __func__);
   return desc_configuration;
 }
 
@@ -154,8 +152,6 @@ tud_descriptor_string_cb(uint8_t index, uint16_t langid)
 	const char *str;
 
 	(void) langid;
-
-printf("%s\n", __func__);
 
 	switch (index) {
 	case STRID_LANGID:
