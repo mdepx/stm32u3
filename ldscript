@@ -71,7 +71,7 @@ SECTIONS
 	} > sram1
 
 	. = ALIGN(8);
-	. = . + 0x400; /* 1kB of stack memory */
+	. = . + 0x4000; /* 16kB of stack memory */
 	stack_top = .;
 	_emem = ABSOLUTE(.);
 }
