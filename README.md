@@ -1,6 +1,6 @@
 # stm32u3
 
-Brushless motor driving app using NUCLEO-U385RG-Q and EVLDRIVE102BH.
+A quick TinyUSB example app using NUCLEO-U385RG-Q.
 
 ### Set up compiler
     $ sudo apt install gcc-arm-none-eabi
@@ -11,4 +11,3 @@ Brushless motor driving app using NUCLEO-U385RG-Q and EVLDRIVE102BH.
     $ make clean all
 
 ![alt text](https://raw.githubusercontent.com/mdepx/stm32u3/main/images/nucleo-u3.webp)
-![alt text](https://raw.githubusercontent.com/mdepx/stm32u3/main/images/evldrive102bh.jpg)
