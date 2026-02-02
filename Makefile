@@ -33,4 +33,7 @@ flash:
 openocd:
 	sudo /home/br/dev/openocd-stm32u3/src/openocd -s /home/br/dev/openocd-stm32u3/tcl -f interface/stlink.cfg -f target/stm32u3x.cfg -c 'adapter serial ${ADAPTER_SERIAL}' -c 'reset_config srst_only connect_assert_srst'
 
+test:
+	sudo python3 hidtest/hidtest.py
+
 include ${OSDIR}/mk/user.mk
